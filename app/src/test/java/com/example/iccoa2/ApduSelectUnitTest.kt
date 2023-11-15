@@ -1,7 +1,6 @@
 package com.example.iccoa2
 
 import com.example.iccoa2.apdu.CommandApduSelect
-import com.example.iccoa2.apdu.ResponseApdu
 import com.example.iccoa2.apdu.ResponseApduSelect
 import com.example.iccoa2.apdu.ResponseApduTrailer
 import org.junit.Test
@@ -19,7 +18,7 @@ class ApduSelectUnitTest {
     }
     @Test
     fun update_select_request() {
-        var request = CommandApduSelect().apply {
+        val request = CommandApduSelect().apply {
             this.aid = ubyteArrayOf(0x10u, 0x20u, 0x30u, 0x40u)
         }
         request.apply {
@@ -77,7 +76,7 @@ class ApduSelectUnitTest {
     }
     @Test
     fun update_select_response() {
-        var response = ResponseApduSelect().apply {
+        val response = ResponseApduSelect().apply {
             this.version = 0x0102u
             this.status = ResponseApduTrailer().apply {
                 this.sw1 = 0x90u

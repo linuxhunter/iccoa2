@@ -3,6 +3,7 @@ package com.example.iccoa2.apdu
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
+@OptIn(ExperimentalUnsignedTypes::class)
 class CommandApduSelect {
     companion object {
         const val CLA: UByte = 0x00u
@@ -45,13 +46,14 @@ class CommandApduSelect {
         if (trailer?.le != LE) {
             return
         }
-        if (trailer?.data?.isEmpty() == true) {
+        if (trailer.data?.isEmpty() == true) {
             return
         }
-        aid = trailer?.data!!
+        aid = trailer.data!!
     }
 }
 
+@OptIn(ExperimentalUnsignedTypes::class)
 class ResponseApduSelect {
     var version: UShort = 0x0000u
     var status: ResponseApduTrailer = ResponseApduTrailer()
@@ -66,7 +68,6 @@ class ResponseApduSelect {
         }
         return response.serialize()
     }
-    @OptIn(ExperimentalStdlibApi::class)
     fun deserialize(buffer: UByteArray) {
         val response = ResponseApdu().apply {
             this.deserialize(buffer)
@@ -75,10 +76,10 @@ class ResponseApduSelect {
             return
         }
         val data = response.data!!
-        val buffer = ByteBuffer.wrap(data.toByteArray(), 0, 2).apply {
+        version = ByteBuffer.wrap(data.toByteArray(), 0, 2).run {
             this.order(ByteOrder.BIG_ENDIAN)
+            this.short.toUShort()
         }
-        version = buffer.short.toUShort()
         status = response.trailer
     }
 }

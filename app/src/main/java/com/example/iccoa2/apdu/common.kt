@@ -15,14 +15,13 @@ class CommandApduHeader {
     var p2: UByte = 0x00u
 
     fun serialize(): UByteArray {
-        val bufferList = ArrayList<UByte>()
-
-        bufferList.add(cla)
-        bufferList.add(ins)
-        bufferList.add(p1)
-        bufferList.add(p2)
-
-        return bufferList.toUByteArray()
+        return arrayListOf<UByte>().run {
+            this.add(cla)
+            this.add(ins)
+            this.add(p1)
+            this.add(p2)
+            this.toUByteArray()
+        }
     }
     fun deserialize(buffer: UByteArray) {
         if (buffer.size < HEADER_LENGTH) {
@@ -32,14 +31,6 @@ class CommandApduHeader {
         ins = buffer[INS_OFFSET]
         p1 = buffer[P1_OFFSET]
         p2 = buffer[P2_OFFSET]
-    }
-    @OptIn(ExperimentalStdlibApi::class)
-    fun debug() {
-        println("Header:")
-        println("\tCLA: ${cla.toHexString()}")
-        println("\tINS: ${ins.toHexString()}")
-        println("\tP1: ${p1.toHexString()}")
-        println("\tP2: ${p2.toHexString()}")
     }
 }
 
@@ -80,17 +71,6 @@ class CommandApduTrailer {
             }
         }
     }
-    @OptIn(ExperimentalStdlibApi::class)
-    fun debug() {
-        println("Trailer:")
-        data?.let {
-            println("\tLc: ${it.size.toHexString()}")
-            println("\tData: ${it.toByteArray().toHexString()}")
-        }
-        le?.let {
-            println("\tLe: ${it.toHexString()}")
-        }
-    }
 }
 
 @OptIn(ExperimentalUnsignedTypes::class)
@@ -121,11 +101,6 @@ class CommandApdu {
                 }
             }
         }
-    }
-    fun debug() {
-        println("Command Apdu")
-        println("${header.debug()}")
-        println("${trailer?.debug()}")
     }
 }
 
@@ -183,10 +158,11 @@ class ResponseApduTrailer {
         return errorMessage
     }
     fun serialize(): UByteArray {
-        val bufferList = ArrayList<UByte>()
-        bufferList.add(sw1)
-        bufferList.add(sw2)
-        return bufferList.toUByteArray()
+        return arrayListOf<UByte>().run {
+            this.add(sw1)
+            this.add(sw2)
+            this.toUByteArray()
+        }
     }
     fun deserialize(buffer: UByteArray) {
         if (buffer.size != TRAILER_LENGTH) {
@@ -194,12 +170,6 @@ class ResponseApduTrailer {
         }
         sw1 = buffer[0]
         sw2 = buffer[1]
-    }
-    @OptIn(ExperimentalStdlibApi::class)
-    fun debug() {
-        println("Trailer")
-        println("\tsw1: ${sw1.toHexString()}")
-        println("\tsw2: ${sw2.toHexString()}")
     }
 }
 
@@ -226,11 +196,5 @@ class ResponseApdu {
             null
         }
         trailer.deserialize(buffer.copyOfRange(buffer.size-2, buffer.size))
-    }
-    @OptIn(ExperimentalStdlibApi::class)
-    fun debug() {
-        println("Body:")
-        println("\tdata: ${data?.toByteArray()?.toHexString()}")
-        trailer.debug()
     }
 }
