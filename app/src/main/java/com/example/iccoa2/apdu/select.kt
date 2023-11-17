@@ -15,21 +15,19 @@ class CommandApduSelect {
     var aid: UByteArray = ubyteArrayOf()
 
     fun serialize(): UByteArray {
-        val header = CommandApduHeader().apply {
-            this.cla = CLA
-            this.ins = INS
-            this.p1 = P1
-            this.p2 = P2
+        return CommandApdu().run {
+            this.header = CommandApduHeader().apply {
+                this.cla = CLA
+                this.ins = INS
+                this.p1 = P1
+                this.p2 = P2
+            }
+            this.trailer = CommandApduTrailer().apply {
+                this.data = aid
+                this.le = LE
+            }
+            this.serialize()
         }
-        val trailer = CommandApduTrailer().apply {
-            this.data = aid
-            this.le = LE
-        }
-        val request = CommandApdu().apply {
-            this.header = header
-            this.trailer = trailer
-        }
-        return request.serialize()
     }
     fun deserialize(buffer: UByteArray) {
         val request = CommandApdu().apply {
@@ -59,14 +57,15 @@ class ResponseApduSelect {
     var status: ResponseApduTrailer = ResponseApduTrailer()
 
     fun serialize(): UByteArray {
-        val buffer = ByteBuffer.allocate(Short.SIZE_BYTES)
-        buffer.order(ByteOrder.BIG_ENDIAN)
-        buffer.putShort(version.toShort())
-        val response = ResponseApdu().apply {
-            this.data = buffer.array().toUByteArray()
+        return ResponseApdu().run {
+            this.data = ByteBuffer.allocate(Short.SIZE_BYTES).run {
+                this.order(ByteOrder.BIG_ENDIAN)
+                this.putShort(version.toShort())
+                this.array().toUByteArray()
+            }
             this.trailer = status
+            this.serialize()
         }
-        return response.serialize()
     }
     fun deserialize(buffer: UByteArray) {
         val response = ResponseApdu().apply {
