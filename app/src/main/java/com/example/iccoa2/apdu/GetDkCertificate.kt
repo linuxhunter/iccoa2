@@ -104,6 +104,9 @@ class ResponseApduGetDkCertificate {
         }
         val tlv = BerTlvParser().run {
             this.parse(response.data!!.toByteArray())
+        } ?: return
+        if (tlv.find(BerTag(CERT_TAG)) == null) {
+            return
         }
         dkType = if (tlv.find(BerTag(FIRST_TAG, VEHICLE_CA_TAG)) != null) {
             DkCertificateType.VehicleCA

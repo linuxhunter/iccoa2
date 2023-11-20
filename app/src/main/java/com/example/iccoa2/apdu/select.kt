@@ -41,10 +41,10 @@ class CommandApduSelect {
             header.p2 != P2) {
             return
         }
-        if (trailer?.le != LE) {
-            return
-        }
-        if (trailer.data?.isEmpty() == true) {
+        if (trailer == null ||
+            trailer.le != LE ||
+            trailer.data == null ||
+            trailer.data?.isEmpty() == true) {
             return
         }
         aid = trailer.data!!

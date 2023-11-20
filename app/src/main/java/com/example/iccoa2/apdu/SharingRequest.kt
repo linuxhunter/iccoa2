@@ -119,7 +119,7 @@ class ResponseApduSharingRequest {
         }
         val tlv = BerTlvParser().run {
             this.parse(response.data!!.toByteArray())
-        }
+        } ?: return
         if (tlv.find(BerTag(FIRST_TEMP_CERT_TAG, SECOND_TEMP_CERT_TAG)) == null ||
             tlv.find(BerTag(INNER_CERT_TAG)) == null) {
             return

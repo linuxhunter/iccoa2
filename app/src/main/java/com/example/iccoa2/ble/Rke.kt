@@ -64,13 +64,13 @@ class RkeRequest {
         rke = RkeFunctionAndAction.values().first {
             it.function == ByteBuffer.wrap(
                 tlv.find(BerTag(FUNCTION_TAG)).run {
-                    this.bytesValue
+                    this!!.bytesValue
                 }, 0, 2
             ).run {
                 this.order(ByteOrder.BIG_ENDIAN)
                 this.short.toUShort()
             } && it.action == tlv.find(BerTag(ACTION_TAG)).run {
-                this.bytesValue[0].toUByte()
+                this!!.bytesValue[0].toUByte()
             }
         }
     }
@@ -117,18 +117,18 @@ class RkeContinuedRequest {
         rke = RkeFunctionAndAction.values().first {
             it.function == ByteBuffer.wrap(
                 tlv.find(BerTag(RkeRequest.FUNCTION_TAG)).run {
-                    this.bytesValue
+                    this!!.bytesValue
                 }, 0, 2
             ).run {
                 this.order(ByteOrder.BIG_ENDIAN)
                 this.short.toUShort()
             } && it.action == tlv.find(BerTag(RkeRequest.ACTION_TAG)).run {
-                this.bytesValue[0].toUByte()
+                this!!.bytesValue[0].toUByte()
             }
         }
         custom = if (tlv.find(BerTag(CUSTOM_TAG)) != null) {
             tlv.find(BerTag(CUSTOM_TAG)).run {
-                this.bytesValue.toUByteArray()
+                this!!.bytesValue.toUByteArray()
             }
         } else {
             null
@@ -157,7 +157,7 @@ class RkeVerificationResponse {
             return
         }
         random = tlv.find(BerTag(RANDOM_TAG)).run {
-            this.bytesValue.toUByteArray()
+            this!!.bytesValue.toUByteArray()
         }
     }
 }
@@ -215,18 +215,18 @@ class RkeResponse {
         rke = RkeFunctionAndAction.values().first {
             it.function == ByteBuffer.wrap(
                 tlv.find(BerTag(FUNCTION_TAG)).run {
-                    this.bytesValue
+                    this!!.bytesValue
                 }, 0, 2
             ).run {
                 this.order(ByteOrder.BIG_ENDIAN)
                 this.short.toUShort()
             } && it.action == tlv.find(BerTag(ACTION_TAG)).run {
-                this.bytesValue[1].toUByte()
+                this!!.bytesValue[1].toUByte()
             }
         }
         status = ByteBuffer.wrap(
             tlv.find(BerTag(STATUS_TAG)).run {
-                this.bytesValue
+                this!!.bytesValue
             }, 0, 2
         ).run {
             this.order(ByteOrder.BIG_ENDIAN)

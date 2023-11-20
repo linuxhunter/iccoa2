@@ -59,12 +59,14 @@ class CommandApduListDk {
             header.p2 != LIST_DK_P2) {
             return
         }
-        if (trailer == null ||
-            trailer.le != LIST_DK_LE) {
+        if ((trailer == null) ||
+            (trailer.le != LIST_DK_LE)
+        ) {
             return
         }
-        if (header.p1 == LIST_SPEC_DK_P1 &&
-            trailer.data == null) {
+        if ((header.p1 == LIST_SPEC_DK_P1) &&
+            (trailer.data == null)
+        ) {
             return
         }
         cla = header.cla
@@ -127,16 +129,20 @@ class ResponseApduListDk {
         val berTlvParse = BerTlvParser().run {
             this.parse(buffer.copyOfRange(0, buffer.size-2).toByteArray())
         }
+        if (berTlvParse.find(BerTag(KEY_ID_TAG)) == null ||
+            berTlvParse.find(BerTag(KEY_ID_STATUS_TAG)) == null) {
+            return
+        }
         keyId = KeyId().apply {
             this.deserialize(
                 berTlvParse.find(BerTag(KEY_ID_TAG)).run {
-                    this.bytesValue.toUByteArray()
+                    this!!.bytesValue.toUByteArray()
                 }
             )
         }
         keyIdStatus = KeyIdStatus.values().first {
             it.value == berTlvParse.find(BerTag(KEY_ID_STATUS_TAG)).run {
-                this.bytesValue.toUByteArray()[0]
+                this!!.bytesValue.toUByteArray()[0]
             }
         }
         status = response.trailer

@@ -71,11 +71,17 @@ class CommandApduAuth0 {
             trailer.le == null) {
             return
         }
-        cla = header.cla
-        p1 = P1.values().first { it.value == header.p1 }
         val berTlvParse = BerTlvParser().run {
             this.parse(trailer.data!!.toByteArray())
+        } ?: return
+        if (berTlvParse.find(BerTag(VERSION_TAG)) == null ||
+            berTlvParse.find(BerTag(VEHICLE_ID_TAG)) == null ||
+            berTlvParse.find(BerTag(VEHICLE_TEMP_PUB_KEY_TAG)) == null ||
+            berTlvParse.find(BerTag(RANDOM_TAG)) == null) {
+            return
         }
+        cla = header.cla
+        p1 = P1.values().first { it.value == header.p1 }
         version = berTlvParse.find(BerTag(VERSION_TAG)).run {
             ByteBuffer.wrap(this.bytesValue).run {
                 this.order(ByteOrder.BIG_ENDIAN)
@@ -130,13 +136,16 @@ class ResponseApduAuth0 {
         }
         val berTlvParse = BerTlvParser().run {
             this.parse(response.data!!.toByteArray())
+        } ?: return
+        if (berTlvParse.find(BerTag(DEVICE_TEMP_PUB_KEY_TAG)) == null) {
+            return
         }
         deviceTempPubKey = berTlvParse.find(BerTag(DEVICE_TEMP_PUB_KEY_TAG)).run {
             this.bytesValue.toUByteArray()
         }
         cryptoGram = if (berTlvParse.find(BerTag(CRYPTO_GRAM_TAG)) != null) {
             berTlvParse.find(BerTag(CRYPTO_GRAM_TAG)).run {
-                this.bytesValue.toUByteArray()
+                this!!.bytesValue.toUByteArray()
             }
         } else {
             null

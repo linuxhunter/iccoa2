@@ -57,16 +57,16 @@ class MeasureRequest {
         }
         type = MeasureType.values().first {
             it.value == tlv.find(BerTag(MEASURE_TYPE_TAG)).run {
-                this.bytesValue[0].toUByte()
+                this!!.bytesValue[0].toUByte()
             }
         }
         action = MeasureAction.values().first {
             it.value == tlv.find(BerTag(MEASURE_ACTION_TAG)).run {
-                this.bytesValue[0].toUByte()
+                this!!.bytesValue[0].toUByte()
             }
         }
         duration = tlv.find(BerTag(MEASURE_DURATION_TAG)).run {
-            this.bytesValue[0].toUByte()
+            this!!.bytesValue[0].toUByte()
         }
     }
 }
@@ -103,11 +103,11 @@ class MeasureResponse {
         }
         result = MeasureResult.values().first {
             it.value == tlv.find(BerTag(MEASURE_ACTION_RESULT_TAG)).run {
-                this.bytesValue[0].toUByte()
+                this!!.bytesValue[0].toUByte()
             }
         }
         duration = tlv.find(BerTag(MEASURE_DURATION_RESULT_TAG)).run {
-            this.bytesValue[0].toUByte()
+            this!!.bytesValue[0].toUByte()
         }
     }
 }

@@ -50,24 +50,30 @@ class Auth1Data {
     fun deserialize(buffer: UByteArray) {
         val berTlvParse = BerTlvParser().run {
             this.parse(buffer.toByteArray())
+        } ?: return
+        if (berTlvParse.find(BerTag(VEHICLE_ID_TAG)) == null ||
+            berTlvParse.find(BerTag(DEVICE_TEMP_PUB_KEY_TAG)) == null ||
+            berTlvParse.find(BerTag(VEHICLE_TEMP_PUB_KEY_TAG)) == null ||
+            berTlvParse.find(BerTag(RANDOM_TAG)) == null) {
+            return
         }
         vehicleId = VehicleId().apply {
             this.deserialize(
                 berTlvParse.run {
                     this.find(BerTag(VEHICLE_ID_TAG)).run {
-                        this.bytesValue.toUByteArray()
+                        this!!.bytesValue.toUByteArray()
                     }
                 }
             )
         }
         deviceTempPubKey = berTlvParse.find(BerTag(DEVICE_TEMP_PUB_KEY_TAG)).run {
-            this.bytesValue.toUByteArray()
+            this!!.bytesValue.toUByteArray()
         }
         vehicleTempPubKey = berTlvParse.find(BerTag(VEHICLE_TEMP_PUB_KEY_TAG)).run {
-            this.bytesValue.toUByteArray()
+            this!!.bytesValue.toUByteArray()
         }
         random = berTlvParse.find(BerTag(RANDOM_TAG)).run {
-            this.bytesValue.toUByteArray()
+            this!!.bytesValue.toUByteArray()
         }
     }
 }

@@ -59,7 +59,7 @@ class CommandApduRke {
         }
         val tlv = BerTlvParser().run {
             this.parse(trailer.data!!.toByteArray())
-        }
+        } ?: return
         if (tlv.find(BerTag(KEY_ID_TAG)) == null ||
             tlv.find(BerTag(RANDOM_TAG)) == null ||
             tlv.find(BerTag(RKE_TAG)) == null) {
@@ -112,7 +112,7 @@ class ResponseApduRke {
         }
         val tlv = BerTlvParser().run {
             this.parse(response.data!!.toByteArray())
-        }
+        } ?: return
         if (tlv.find(BerTag(KEY_ID_TAG)) == null ||
             tlv.find(BerTag(SIGNATURE_TAG)) == null) {
             return

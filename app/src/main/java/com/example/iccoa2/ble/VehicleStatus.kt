@@ -72,7 +72,7 @@ class SubscribeVehicleStatusRequest {
             VehicleEntity.values().first {
                 it.value == ByteBuffer.wrap(
                     tlv.find(BerTag(ENTITY_TAG)).run {
-                        this.bytesValue
+                        this!!.bytesValue
                     }, 0, 2).run {
                     this.order(ByteOrder.BIG_ENDIAN)
                     this.short.toUShort()
@@ -140,7 +140,7 @@ class QueryVehicleStatusRequest {
             VehicleEntity.values().first {
                 it.value == ByteBuffer.wrap(
                     tlv.find(BerTag(ENTITY_TAG)).run {
-                        this.bytesValue
+                        this!!.bytesValue
                     }, 0, 2).run {
                     this.order(ByteOrder.BIG_ENDIAN)
                     this.short.toUShort()
@@ -205,7 +205,7 @@ class UnsubscribeVehicleStatusRequest {
             VehicleEntity.values().first {
                 it.value == ByteBuffer.wrap(
                     tlv.find(BerTag(ENTITY_TAG)).run {
-                        this.bytesValue
+                        this!!.bytesValue
                     }, 0, 2).run {
                     this.order(ByteOrder.BIG_ENDIAN)
                     this.short.toUShort()
@@ -236,7 +236,7 @@ class SubscribeVerificationResponse {
             return
         }
         random = tlv.find(BerTag(RANDOM_TAG)).run {
-            this.bytesValue.toUByteArray()
+            this!!.bytesValue.toUByteArray()
         }
     }
 }
@@ -297,7 +297,7 @@ class VehicleStatusResponse {
         entity = VehicleEntity.values().first {
             it.value == ByteBuffer.wrap(
                 tlv.find(BerTag(ENTITY_TAG)).run {
-                    this.bytesValue
+                    this!!.bytesValue
                 }, 0, 2).run {
                 this.order(ByteOrder.BIG_ENDIAN)
                 this.short.toUShort()
@@ -305,7 +305,7 @@ class VehicleStatusResponse {
         }
         status = ByteBuffer.wrap(
             tlv.find(BerTag(STATUS_TAG)).run {
-                this.bytesValue
+                this!!.bytesValue
             }, 0, 2).run {
             this.order(ByteOrder.BIG_ENDIAN)
             this.short.toUShort()
@@ -314,7 +314,7 @@ class VehicleStatusResponse {
             null
         } else {
             tlv.find(BerTag(RANDOM_TAG)).run {
-                this.bytesValue.toUByteArray()
+                this!!.bytesValue.toUByteArray()
             }
         }
     }
