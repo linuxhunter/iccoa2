@@ -1,6 +1,7 @@
 package com.example.iccoa2.ble
 
 import com.payneteasy.tlv.BerTag
+import com.payneteasy.tlv.BerTlv
 import com.payneteasy.tlv.BerTlvBuilder
 import com.payneteasy.tlv.BerTlvParser
 import java.nio.ByteBuffer
@@ -54,6 +55,9 @@ class SubscribeVehicleStatusRequest {
         if (tlv.find(BerTag(FIRST_SUBSCRIBE_TAG, SECOND_SUBSCRIBE_TAG)) == null) {
             return
         }
+        deserializeFromTlv(tlv.find(BerTag(FIRST_SUBSCRIBE_TAG, SECOND_SUBSCRIBE_TAG)))
+    }
+    fun deserializeFromTlv(tlv: BerTlv) {
         if (tlv.find(BerTag(SUBSCRIBE_MIDDLE_TAG)) == null &&
             tlv.find(BerTag(SUBSCRIBE_ALL_TAG)) == null) {
             return
@@ -119,6 +123,9 @@ class QueryVehicleStatusRequest {
         if (tlv.find(BerTag(FIRST_QUERY_TAG, SECOND_QUERY_TAG)) == null) {
             return
         }
+        deserializeFromTlv(tlv.find(BerTag(FIRST_QUERY_TAG, SECOND_QUERY_TAG)))
+    }
+    fun deserializeFromTlv(tlv: BerTlv) {
         if (tlv.find(BerTag(QUERY_MIDDLE_TAG)) == null &&
             tlv.find(BerTag(QUERY_ALL_TAG)) == null) {
             return
@@ -181,6 +188,9 @@ class UnsubscribeVehicleStatusRequest {
         if (tlv.find(BerTag(FIRST_UNSUBSCRIBE_TAG, SECOND_UNSUBSCRIBE_TAG)) == null) {
             return
         }
+        deserializeFromTlv(tlv.find(BerTag(FIRST_UNSUBSCRIBE_TAG, SECOND_UNSUBSCRIBE_TAG)))
+    }
+    fun deserializeFromTlv(tlv: BerTlv) {
         if (tlv.find(BerTag(UNSUBSCRIBE_MIDDLE_TAG)) == null &&
             tlv.find(BerTag(UNSUBSCRIBE_ALL_TAG)) == null) {
             return

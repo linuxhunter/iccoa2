@@ -1,6 +1,7 @@
 package com.example.iccoa2.ble
 
 import com.payneteasy.tlv.BerTag
+import com.payneteasy.tlv.BerTlv
 import com.payneteasy.tlv.BerTlvBuilder
 import com.payneteasy.tlv.BerTlvParser
 import java.nio.ByteBuffer
@@ -50,8 +51,13 @@ class RkeRequest {
         val tlv = BerTlvParser().run {
             this.parse(buffer.toByteArray())
         }
-        if (tlv.find(BerTag(FIRST_RKE_REQUEST_TAG, SECOND_RKE_REQUEST_TAG)) == null ||
-            tlv.find(BerTag(FUNCTION_TAG)) == null ||
+        if (tlv.find(BerTag(FIRST_RKE_REQUEST_TAG, SECOND_RKE_REQUEST_TAG)) == null) {
+            return
+        }
+        deserializeFromTlv(tlv.find(BerTag(FIRST_RKE_REQUEST_TAG, SECOND_RKE_REQUEST_TAG)))
+    }
+    fun deserializeFromTlv(tlv: BerTlv) {
+        if (tlv.find(BerTag(FUNCTION_TAG)) == null ||
             tlv.find(BerTag(ACTION_TAG)) == null) {
             return
         }

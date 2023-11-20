@@ -5,6 +5,8 @@ import com.example.iccoa2.ble.RkeFunctionAndAction
 import com.example.iccoa2.ble.RkeRequest
 import com.example.iccoa2.ble.RkeResponse
 import com.example.iccoa2.ble.RkeVerificationResponse
+import com.payneteasy.tlv.BerTag
+import com.payneteasy.tlv.BerTlvParser
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -129,6 +131,26 @@ class BleRkeUnitTest {
         )
         val request = RkeRequest().apply {
             this.deserialize(buffer)
+        }
+        assertEquals(request.rke.function.toInt(), 0x0001)
+        assertEquals(request.rke.action.toInt(), 0x01)
+    }
+    @Test
+    fun deserialize_from_tlv_rke_request() {
+        val buffer: UByteArray = ubyteArrayOf(
+            0x7Fu, 0x70u,
+            0x07u,
+            0x80u, 0x02u,
+            0x00u, 0x01u,
+            0x81u, 0x01u,
+            0x01u,
+        )
+        val tlv = BerTlvParser().run {
+            this.parse(buffer.toByteArray())
+        }
+        assertNotNull(tlv)
+        val request = RkeRequest().apply {
+            this.deserializeFromTlv(tlv.find(BerTag(RkeRequest.FIRST_RKE_REQUEST_TAG, RkeRequest.SECOND_RKE_REQUEST_TAG)))
         }
         assertEquals(request.rke.function.toInt(), 0x0001)
         assertEquals(request.rke.action.toInt(), 0x01)

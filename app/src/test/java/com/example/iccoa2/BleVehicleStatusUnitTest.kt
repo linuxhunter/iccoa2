@@ -6,6 +6,8 @@ import com.example.iccoa2.ble.SubscribeVerificationResponse
 import com.example.iccoa2.ble.UnsubscribeVehicleStatusRequest
 import com.example.iccoa2.ble.VehicleEntity
 import com.example.iccoa2.ble.VehicleStatusResponse
+import com.payneteasy.tlv.BerTag
+import com.payneteasy.tlv.BerTlvParser
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -97,6 +99,24 @@ class BleVehicleStatusUnitTest {
         assertEquals(request.entity!!.value.toInt(), 0x0001)
     }
     @Test
+    fun deserialize_from_tlv_subscribe_request() {
+        val buffer: UByteArray = ubyteArrayOf(
+            0x7Fu, 0x73u,
+            0x06u,
+            0x30u, 0x04u,
+            0x84u, 0x02u,
+            0x00u, 0x01u,
+        )
+        val tlv = BerTlvParser().run {
+            this.parse(buffer.toByteArray())
+        }
+        val request = SubscribeVehicleStatusRequest().apply {
+            this.deserializeFromTlv(tlv.find(BerTag(SubscribeVehicleStatusRequest.FIRST_SUBSCRIBE_TAG, SubscribeVehicleStatusRequest.SECOND_SUBSCRIBE_TAG)))
+        }
+        assertNotNull(request.entity)
+        assertEquals(request.entity!!.value.toInt(), 0x0001)
+    }
+    @Test
     fun create_subscribe_all_request() {
         val request = SubscribeVehicleStatusRequest().apply {
             this.entity = null
@@ -127,6 +147,21 @@ class BleVehicleStatusUnitTest {
         )
         val request = SubscribeVehicleStatusRequest().apply {
             this.deserialize(buffer)
+        }
+        assertNull(request.entity)
+    }
+    @Test
+    fun deserialize_from_tlv_subscribe_all_request() {
+        val buffer: UByteArray = ubyteArrayOf(
+            0x7Fu, 0x73u,
+            0x02u,
+            0x86u, 0x00u,
+        )
+        val tlv = BerTlvParser().run {
+            this.parse(buffer.toByteArray())
+        }
+        val request = SubscribeVehicleStatusRequest().apply {
+            this.deserializeFromTlv(tlv.find(BerTag(SubscribeVehicleStatusRequest.FIRST_SUBSCRIBE_TAG, SubscribeVehicleStatusRequest.SECOND_SUBSCRIBE_TAG)))
         }
         assertNull(request.entity)
     }
@@ -183,6 +218,24 @@ class BleVehicleStatusUnitTest {
         assertEquals(request.entity, VehicleEntity.CarLight)
     }
     @Test
+    fun deserialize_from_tlv_query_reqeust() {
+        val buffer: UByteArray = ubyteArrayOf(
+            0x7Fu, 0x74u,
+            0x06u,
+            0x30u, 0x04u,
+            0x84u, 0x02u,
+            0x00u, 0x06u,
+        )
+        val tlv = BerTlvParser().run {
+            this.parse(buffer.toByteArray())
+        }
+        val request = QueryVehicleStatusRequest().apply {
+            this.deserializeFromTlv(tlv.find(BerTag(QueryVehicleStatusRequest.FIRST_QUERY_TAG, QueryVehicleStatusRequest.SECOND_QUERY_TAG)))
+        }
+        assertNotNull(request.entity)
+        assertEquals(request.entity, VehicleEntity.CarLight)
+    }
+    @Test
     fun create_query_all_request() {
         val request = QueryVehicleStatusRequest().apply {
             this.entity = null
@@ -213,6 +266,21 @@ class BleVehicleStatusUnitTest {
         )
         val request = QueryVehicleStatusRequest().apply {
             this.deserialize(buffer)
+        }
+        assertNull(request.entity)
+    }
+    @Test
+    fun deserialize_from_tlv_query_all_request() {
+        val buffer: UByteArray = ubyteArrayOf(
+            0x7Fu, 0x74u,
+            0x02u,
+            0x86u, 0x00u,
+        )
+        val tlv = BerTlvParser().run {
+            this.parse(buffer.toByteArray())
+        }
+        val request = QueryVehicleStatusRequest().apply {
+            this.deserializeFromTlv(tlv.find(BerTag(QueryVehicleStatusRequest.FIRST_QUERY_TAG, QueryVehicleStatusRequest.SECOND_QUERY_TAG)))
         }
         assertNull(request.entity)
     }
@@ -264,6 +332,24 @@ class BleVehicleStatusUnitTest {
         )
         val request = UnsubscribeVehicleStatusRequest().apply {
             this.deserialize(buffer)
+        }
+        assertNotNull(request.entity)
+        assertEquals(request.entity, VehicleEntity.Engine)
+    }
+    @Test
+    fun deserialize_from_tlv_unsubscribe_request() {
+        val buffer: UByteArray = ubyteArrayOf(
+            0x7Fu, 0x75u,
+            0x06u,
+            0x30u, 0x04u,
+            0x84u, 0x02u,
+            0x00u, 0x04u,
+        )
+        val tlv = BerTlvParser().run {
+            this.parse(buffer.toByteArray())
+        }
+        val request = UnsubscribeVehicleStatusRequest().apply {
+            this.deserializeFromTlv(tlv.find(BerTag(UnsubscribeVehicleStatusRequest.FIRST_UNSUBSCRIBE_TAG, UnsubscribeVehicleStatusRequest.SECOND_UNSUBSCRIBE_TAG)))
         }
         assertNotNull(request.entity)
         assertEquals(request.entity, VehicleEntity.Engine)
